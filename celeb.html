@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Celebrities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    :root{
+      --bg:#0b0b0c;          /* deep black */
+      --panel:#141417;       /* card bg */
+      --muted:#9b9b9f;       /* muted text */
+      --accent:#ff6a00;      /* bright orange */
+      --accent-2:#ff8a33;    /* softer orange */
+      --ring: rgba(255,106,0,.35);
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(255,106,0,.12), 0 1px 0 rgba(255,255,255,.04) inset;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 10% -10%, rgba(255,106,0,.08), transparent 60%),
+                  radial-gradient(1000px 700px at 110% 10%, rgba(255,106,0,.06), transparent 60%),
+                  var(--bg);
+      color:#fff;
+      letter-spacing:.2px;
+    }
+    header{
+      position: sticky; top:0; z-index:10;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(20,20,23,.92), rgba(20,20,23,.75));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav{
+      max-width:1200px; margin:0 auto; padding:14px 18px; display:flex; align-items:center; gap:16px;
+    }
+    .brand{ display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.6px; }
+    .brand .logo{
+      width:36px; height:36px; border-radius:50%;
+      background: conic-gradient(from 210deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 0 4px rgba(255,106,0,.15), 0 8px 30px rgba(255,106,0,.25);
+    }
+    .brand span{ font-size:1.05rem; }
+
+    .controls{ margin-left:auto; display:flex; gap:10px; align-items:center; }
+    .control{
+      background: var(--panel);
+      border:1px solid rgba(255,255,255,.06);
+      color:#fff; border-radius: 12px; padding:10px 12px; display:flex; align-items:center; gap:10px;
+      box-shadow: var(--shadow);
+    }
+    .control input, .control select{ background:transparent; border:none; outline:none; color:#fff; min-width:120px; }
+    .control input::placeholder{ color:#7d7d84; }
+
+    main{ max-width:1200px; margin: 24px auto; padding: 0 18px 80px; }
+    .meta-bar{ display:flex; align-items:center; justify-content:space-between; margin:8px 2px 16px; color:var(--muted); font-size:.95rem; }
+
+    .grid{
+      display:grid; gap:18px; grid-template-columns: repeat( auto-fit, minmax(240px, 1fr) );
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,106,0,.06), transparent 40%), var(--panel);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius);
+      overflow:hidden; position:relative; transform: translateY(8px); opacity:0;
+      transition: transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .3s linear, opacity .6s ease;
+    }
+    .card.visible{ transform: translateY(0); opacity:1; }
+    .card:hover{ box-shadow: 0 14px 40px var(--ring); }
+
+    .cover{ width:100%; height:220px; object-fit:cover; display:block; background:#0f0f12; }
+
+    .content{ padding:14px 14px 16px; }
+    .name{ display:flex; align-items:center; gap:10px; }
+    .name h3{ margin:0; color: var(--accent); font-size:1.05rem; }
+    .flag{ width:20px; height:14px; border-radius:3px; object-fit:cover; border:1px solid rgba(255,255,255,.25); }
+    .country{ margin-top:6px; color:var(--muted); font-size:.9rem; }
+
+    .links{ display:flex; gap:12px; align-items:center; margin-top:12px; }
+    .links a{ color: var(--accent-2); font-size:1.25rem; transition: transform .2s ease, color .2s ease; }
+    .links a:hover{ color:#fff; transform: translateY(-2px) scale(1.06); }
+
+    .empty{ text-align:center; color:var(--muted); padding:40px 12px; border:1px dashed rgba(255,255,255,.1); border-radius:12px; }
+
+    .footer{
+      position:fixed; inset:auto 0 0 0; background: linear-gradient(180deg, rgba(20,20,23,.6), rgba(20,20,23,.92));
+      border-top:1px solid rgba(255,255,255,.07); backdrop-filter: blur(6px);
+    }
+    .footer .inner{ max-width:1200px; margin:0 auto; padding:10px 18px; display:flex; align-items:center; gap:12px; color:var(--muted); font-size:.9rem; }
+
+    .btn{ cursor:pointer; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background: var(--panel); color:#fff; }
+    .btn:hover{ box-shadow: 0 8px 24px var(--ring); }
+
+    /* Scroll-to-top */
+    .to-top{ position:fixed; right:16px; bottom:78px; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:var(--panel); border:1px solid rgba(255,255,255,.08); color:#fff; cursor:pointer; opacity:0; transform: translateY(8px); transition:.25s; }
+    .to-top.visible{ opacity:1; transform: translateY(0); }
+
+    /* loader */
+    .loader {
+      display: block;
+      margin: 22px auto 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,.08);
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* small note */
+    .note { color: var(--muted); font-size: 0.9rem; margin-top: 10px; text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand" aria-label="Global Celebrities">
+        <div class="logo" aria-hidden="true"></div>
+        <span>Global Celebrities</span>
+      </div>
+      <label class="control" title="Search by name or country">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input id="search" type="search" placeholder="Search name, country…" autocomplete="off" />
+      </label>
+      <label class="control" title="Filter by country">
+        <i class="fa-solid fa-flag" aria-hidden="true"></i>
+        <select id="country">
+          <option value="">All countries</option>
+        </select>
+      </label>
+      <button id="reset" class="btn" title="Reset filters"><i class="fa-solid fa-rotate"></i></button>
+    </div>
+  </header>
+
+  <main>
+    <div class="meta-bar"><span id="count">Loading celebrities…</span><span id="activeFilters"></span></div>
+    <div id="grid" class="grid" role="list" aria-live="polite"></div>
+
+    <div id="loading" style="display:none">
+      <div class="loader" aria-hidden="true"></div>
+      <div class="note">Loading more celebrities…</div>
+    </div>
+
+    <div id="empty" class="empty" style="display:none">No matches. Try a different search or clear filters.</div>
+  </main>
+
+  <div id="toTop" class="to-top" title="Back to top"><i class="fa-solid fa-arrow-up"></i></div>
+
+  <footer class="footer">
+    <div class="inner">
+      <span>© <span id="year"></span> Global Celebrities</span>
+      <span style="margin-left:auto">Dark theme • Orange accents</span>
+    </div>
+  </footer>
+
+  <script>
+    /* -------------------------
+       Configuration / constants
+       ------------------------- */
+    const DATA_URL = 'https://raw.githubusercontent.com/AMADIN01/celebrity-json/refs/heads/main/celebrities.json'; // <-- place the extracted/produced celebrities.json here (same folder), or set to hosted URL
+    const CHUNK_SIZE = 50;               // how many items to render per incremental load
+    const SCROLL_LOAD_OFFSET = 800;      // pixels from bottom to trigger loadMore
+
+    /* -------------------------
+       Tiny helpers
+       ------------------------- */
+    const el = (q, p=document) => p.querySelector(q);
+    const els = (q, p=document) => [...p.querySelectorAll(q)];
+    const grid = el('#grid');
+    const search = el('#search');
+    const country = el('#country');
+    const resetBtn = el('#reset');
+    const count = el('#count');
+    const empty = el('#empty');
+    const toTop = el('#toTop');
+    const activeFilters = el('#activeFilters');
+    const loadingIndicator = el('#loading');
+    const yearEl = el('#year');
+
+    const FLAG_CDN = (code) => `https://flagcdn.com/w40/${code}.png`;
+
+    /* -------------------------
+       App state
+       ------------------------- */
+    let DATA = [];        // full dataset from JSON
+    let FILTERED = [];    // filtered results based on search/country
+    let renderIndex = 0;  // how many items have been rendered into DOM
+    let loadingMore = false;
+    let io = null;        // intersection observer used for reveal animations
+
+    /* -------------------------
+       Rendering helpers
+       ------------------------- */
+    function icon(name){
+      return `<i class="fab fa-${name}" aria-hidden="true"></i>`;
+    }
+
+    function socialLink(url, iconName, label){
+      if(!url) return '';
+      const safe = url.replace(/"/g, '&quot;');
+      return `<a href="${safe}" target="_blank" rel="noopener" aria-label="${label}">${icon(iconName)}</a>`;
+    }
+
+    function cardHtml(item){
+      const img = item.image || '';
+      const flag = item.flag ? `<img class="flag" src="${FLAG_CDN(item.flag)}" alt="${item.country} flag" loading="lazy">` : '';
+      return `
+      <article class="card" role="listitem">
+        <img class="cover" src="${img}" alt="${item.name}" loading="lazy"
+             onerror="this.src='https://via.placeholder.com/600x400/0e0e10/ffffff?text=No+Image'"/>
+        <div class="content">
+          <div class="name"><h3>${item.name}</h3>${flag}</div>
+          <div class="country">${item.country}</div>
+          <div class="links">
+            ${socialLink(item.instagram,'instagram', item.name + ' on Instagram')}
+            ${socialLink(item.twitter,'twitter', item.name + ' on Twitter/X')}
+            ${socialLink(item.facebook,'facebook', item.name + ' on Facebook')}
+            ${socialLink(item.tiktok,'tiktok', item.name + ' on TikTok')}
+            ${socialLink(item.youtube,'youtube', item.name + ' on YouTube')}
+          </div>
+        </div>
+      </article>`;
+    }
+
+    /* Append next chunk of items into the grid */
+    function renderNextChunk(){
+      if(renderIndex >= FILTERED.length) return;
+      const end = Math.min(renderIndex + CHUNK_SIZE, FILTERED.length);
+      const slice = FILTERED.slice(renderIndex, end);
+      // append HTML
+      const html = slice.map(cardHtml).join('');
+      const container = document.createElement('div');
+      container.innerHTML = html;
+      // move children into grid to allow IntersectionObserver on each .card
+      while(container.firstChild){
+        grid.appendChild(container.firstChild);
+      }
+      renderIndex = end;
+      // attach reveal observer to newly added cards
+      attachRevealObserver();
+      // update UI
+      updateMeta();
+      // hide loading indicator when done
+      if(renderIndex >= FILTERED.length) { loadingIndicator.style.display = 'none'; }
+      loadingMore = false;
+    }
+
+    /* Clear grid and reset render index */
+    function resetRenderedGrid(){
+      grid.innerHTML = '';
+      renderIndex = 0;
+    }
+
+    /* -------------------------
+       Filters & search
+       ------------------------- */
+    function applyFilters(){
+      const q = (search.value || '').trim().toLowerCase();
+      const c = (country.value || '').toLowerCase();
+      FILTERED = DATA.filter(it => {
+        const text = `${it.name} ${it.country}`.toLowerCase();
+        const matchText = !q || text.includes(q);
+        const matchCountry = !c || it.country.toLowerCase() === c;
+        return matchText && matchCountry;
+      });
+      // reset rendering
+      resetRenderedGrid();
+      if(FILTERED.length === 0){
+        empty.style.display = 'block';
+        loadingIndicator.style.display = 'none';
+      } else {
+        empty.style.display = 'none';
+        loadingIndicator.style.display = 'block';
+        // render the first chunk
+        renderNextChunk();
+      }
+      updateMeta();
+    }
+
+    function updateMeta(){
+      count.textContent = `${FILTERED.length} ${FILTERED.length===1 ? 'celebrity' : 'celebrities'}`;
+      const bits = [];
+      if(search.value) bits.push(`Search: "${search.value}"`);
+      if(country.value) bits.push(`Country: ${country.value}`);
+      activeFilters.textContent = bits.join(' • ');
+    }
+
+    /* -------------------------
+       Country dropdown
+       ------------------------- */
+    function populateCountries(items){
+      const codes = new Map();
+      for(const it of items){ codes.set(it.country, it.flag); }
+      const opts = ['<option value="">All countries</option>'];
+      [...codes.entries()].sort((a,b)=>a[0].localeCompare(b[0])).forEach(([name, code])=>{
+        opts.push(`<option value="${name}" data-flag="${code}">${name}</option>`);
+      });
+      country.innerHTML = opts.join('');
+    }
+
+    /* -------------------------
+       Reveal animations (IntersectionObserver)
+       ------------------------- */
+    function attachRevealObserver(){
+      // create IO once if not created
+      if(!io){
+        io = new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{
+            if(e.isIntersecting){
+              e.target.classList.add('visible');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.18 });
+      }
+      // observe any .card elements that don't have .visible yet
+      const cards = els('.card:not(.visible)', grid);
+      cards.forEach(c => io.observe(c));
+    }
+
+    /* -------------------------
+       Infinite scroll / load more
+       ------------------------- */
+    function maybeLoadMoreOnScroll(){
+      if(loadingMore) return;
+      const scrolledFromTop = window.scrollY + window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+      // If user is within SCROLL_LOAD_OFFSET pixels of the bottom, load more
+      if(fullHeight - scrolledFromTop < SCROLL_LOAD_OFFSET && renderIndex < FILTERED.length){
+        loadingMore = true;
+        loadingIndicator.style.display = 'block';
+        // small timeout to show loader even on fast machines
+        setTimeout(() => { renderNextChunk(); }, 250);
+      }
+    }
+
+    /* -------------------------
+       Wire UI events
+       ------------------------- */
+    function wireUI(){
+      let debounceTimer = null;
+      search.addEventListener('input', ()=> {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(applyFilters, 180);
+      });
+      country.addEventListener('change', applyFilters);
+      resetBtn.addEventListener('click', ()=> { search.value=''; country.value=''; applyFilters(); });
+      window.addEventListener('scroll', ()=>{
+        const y = window.scrollY || document.documentElement.scrollTop;
+        toTop.classList.toggle('visible', y > 600);
+        maybeLoadMoreOnScroll();
+      });
+      toTop.addEventListener('click', ()=> window.scrollTo({ top:0, behavior:'smooth' }));
+      yearEl.textContent = new Date().getFullYear();
+    }
+
+    /* -------------------------
+       Initial fetch + bootstrap
+       ------------------------- */
+    async function init(){
+      wireUI();
+      try {
+        loadingIndicator.style.display = 'block';
+        const res = await fetch(DATA_URL);
+        if(!res.ok) throw new Error('Failed to load data: ' + res.status);
+        const payload = await res.json();
+        DATA = Array.isArray(payload) ? payload : (payload.celebrities || []);
+        // ensure flag fields are normalized (if some entries use country code as 'flag' already it's fine)
+        // optionally you could map/clean data here.
+        populateCountries(DATA);
+        // initial filtered set = all
+        FILTERED = [...DATA];
+        // render first chunk
+        if(FILTERED.length === 0){
+          empty.style.display = 'block';
+        } else {
+          empty.style.display = 'none';
+          renderNextChunk();
+        }
+      } catch (err) {
+        console.error(err);
+        empty.style.display = 'block';
+        empty.textContent = 'Failed to load celebrities data.';
+      } finally {
+        loadingIndicator.style.display = (renderIndex < FILTERED.length) ? 'block' : 'none';
+      }
+    }
+
+    // start
+    init();
+  </script>
+</body>
+</html>
